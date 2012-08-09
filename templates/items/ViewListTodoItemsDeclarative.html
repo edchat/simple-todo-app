@@ -1,0 +1,33 @@
+<div class="view mblView">
+	<script type="dojo/require">at: "dojox/mvc/at"</script>
+	<div id="datewrapper">
+	<div id="itemswrapper2"  style="visibility:visible" data-dojo-type="dojox/mobile/Heading" 
+			data-dojo-props='label:"To do items"' data-app-region="top">
+		<span  id="itemslist_add2" data-dojo-type="dojox/mobile/ToolBarButton" 
+			data-dojo-props='icon: "mblDomButtonWhitePlus"' style="float:right;"></span>
+	</div>		
+	<div data-dojo-type="dojox/app/widgets/Container" data-app-region="center" data-dojo-props="scrollable: true">
+		<h2 data-dojo-type="dojox/mobile/RoundRectCategory" data-app-region="top">All items declarative</h2>
+		<ul id="itemsDate_list"
+			data-dojo-type="dojox/mobile/RoundRectList"
+			data-dojo-mixins="dojox/mvc/WidgetList,dojox/mvc/_InlineTemplateMixin"
+			data-mvc-child-type="dojox/mvc/Templated"
+			data-mvc-child-mixins="dojox/mobile/ListItem"
+			data-mvc-child-props="clickable: true,
+				transitionOptions: {title:'Detail', target:'details,EditTodoItem',url: '#details,EditTodoItem'},
+				onClick: function(){showItemDetails(this.indexAtStartup);}">
+			<script type="dojox/mvc/InlineTemplate">
+				<li class="mblVariableHeight">
+						<div preventTouch="true" class="lineItemPreventTouch"></div>
+						<input type="checkbox"
+							data-dojo-type="dojox/mobile/CheckBox"
+							data-dojo-props="preventTouch: true, checked: at('rel:', 'completed')"/>
+							<div data-dojo-type="dojox/mvc/Output" style="display: inline"
+								data-dojo-props="value: at('rel:','title'), 
+												class: at('rel:','completed').direction(at.from).transform(itemCompletedClassTransform)"></div>
+				</li>
+			</script>
+		</ul>
+	</div>
+	</div>
+</div>

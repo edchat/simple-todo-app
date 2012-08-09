@@ -1,8 +1,5 @@
-simple-todo-app
-===============
-
-A Simple todo app, first step to creating the dojo-todo-app
-
+-------------------------------------------------------------------------------
+To Do Application - This is a ToDo sample application based on dojox/app, dojox/mobile & dojox/mvc modules
 -------------------------------------------------------------------------------
 Authors: Ed Chatelain, Christophe Jolif, Eric Wang, Chris Mitchell
 -------------------------------------------------------------------------------
@@ -28,7 +25,7 @@ Installation instructions
 
 -------------------------------------------------------------------------------
 If you are using this project from github when doing a checkout you will want
-to put it in the demos directory and use the name "simple-todo-app",
+to put it in the demos directory and use the name "todoApp",
 if a different directory name is used the themes will not work correctly. 
 -------------------------------------------------------------------------------
 Known Limitations:

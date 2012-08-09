@@ -1,0 +1,110 @@
+{
+	"id": "simple-todo-app",
+	"name": "Simple ToDo App",
+	"description": "This is a Simple ToDo application which could be a first step to creating the dojo-todo-app based on the Dojo Toolkit and provided under Dojo license.",
+	"splash": "splash",
+
+	"loaderConfig": {
+		"paths": {
+			"simple-todo-app": "../demos/simple-todo-app"
+		}
+	},
+
+	"dependencies": [
+		"dojox/mobile/_base",
+		"dojox/mobile/_compat",
+		"dojox/mobile/TabBar",
+		"dojox/mobile/RoundRect",
+		"dojox/mobile/TabBarButton",
+		"dojox/mobile/TextBox",
+		"dojox/mobile/TextArea",
+		"dojox/mobile/CheckBox",
+		"dojox/mobile/ExpandingTextArea",
+		"dojox/mobile/Button",
+		"dojox/mobile/RoundRect",
+		"dojox/mobile/Heading",
+		"dojox/mobile/ListItem",
+		"dojox/mobile/RoundRectList",
+		"dojox/mobile/RoundRectCategory",
+		"dojox/mobile/Switch",
+		"dojox/mobile/SimpleDialog",
+		"dojox/app/widgets/Container",
+		"dojo/store/Memory",
+		"dojo/data/ItemFileWriteStore",
+		"dojo/store/DataStore",
+		"dojox/app/utils/mvcModel",
+		"dojox/mvc/EditStoreRefListController",
+		"dojox/mvc/WidgetList",
+		"dojox/mvc/Group",
+		"dojox/mvc/Output",
+		"dojox/mvc/at"
+	],
+	// Modules for the application.  They are basically used as the second
+	// array of mixins in a dojo.declare().  Modify the top level behavior
+	// of the application, how it processes the config or any other life cycle
+	// by creating and including one or more of these
+	"modules": [
+		"simple-todo-app/simple-todo-app"
+	],
+
+	"controllers": [
+		"dojox/app/controllers/History"
+	],
+	//stores we are using
+	"stores": {
+		"allitemlistStore":{
+	       "type": "dojo/data/ItemFileWriteStore",
+		   "params": {
+				"url": "./resources/data/all-items.json"
+		   }
+	   }	   
+	},
+
+	//models and instantiation parameters for the models. Including 'type' as a property allows
+	//one to overide the class that will be used for the model.  By default it is dojox/mvc/model
+	"models": {
+		"allitemlistmodel": {
+			"modelLoader": "dojox/app/utils/mvcModel",
+			"type": "dojox/mvc/EditStoreRefListController",
+     		"params":{
+     			"datastore": {"$ref":"#stores.allitemlistStore"}
+     		}           
+        }
+	},
+
+	//the name of the scene to load when the app is initialized.
+	"defaultView": "items,ViewListTodoItemsProgrammatic",
+
+	"defaultTransition": "slide",
+	//scenes are groups of views and models loaded at once
+	"views": {
+		//items scene, include ViewListTodoItemsProgrammatic view and ViewListTodoItemsDeclarative view
+		"items": {
+			"defaultView": "ViewListTodoItemsProgrammatic",
+			"defaultTransition": "slide",
+			"definition": "none",
+			//the views available to this scene
+			"views": {
+				"ViewListTodoItemsProgrammatic":{
+					"template": "simple-todo-app/templates/items/ViewListTodoItemsProgrammatic.html"
+				},
+				"ViewListTodoItemsDeclarative":{
+					"template": "simple-todo-app/templates/items/ViewListTodoItemsDeclarative.html"
+				}
+			}
+		},
+
+		//details scene, include list view and date view
+		"details": {
+			"defaultView": "EditTodoItem",
+			"defaultTransition": "slide",
+			"definition": "none",
+
+			"views": {
+				"EditTodoItem":{
+					"template": "simple-todo-app/templates/details/EditTodoItem.html"
+				}
+			}
+		}
+	}
+}

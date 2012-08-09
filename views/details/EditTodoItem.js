@@ -1,0 +1,222 @@
+define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/registry",
+	"dojox/mobile/TransitionEvent", "dojox/mvc/getStateful", "dojox/mvc/at", "dojo/date/stamp", "dojox/mobile/CheckBox"],
+	function(lang, dom, domStyle, on, registry, TransitionEvent, getStateful, at, stamp){
+	var listsmodel = null;
+	var isComplete = false;
+	var isDelete = false;
+	var detailsSetup = false;
+	this.app._addNewItemCommit = false; // identify the new item is committed
+
+	var dateClassTransform2 = {
+		format : function(value) {
+			// check to see if the date is in the past, if so display it in red
+			if(value && value < stamp.toISOString(new Date(), {selector: "date"})){
+				return "dateLabelInvalid";
+			}else{
+				return "";
+			}
+		}
+	};
+
+	itemCompletedClassTransform = {
+		format : function(value) {
+			// check to see if the item is completed, if so display it in strikethrough and gray
+			if(value){
+				return "itemCompleted";
+			}else{
+				return "";
+			}
+		}
+	};
+
+	// transform the repeat to the correct text
+	var repeatTransform = {
+		format : function(value) {
+			var repeatArray = ["None", "Every Day", "Every Week", "Every 2 Week", "Every Month", "Every Year"];
+			return repeatArray[value] ? repeatArray[value] : '';
+		}
+	};
+
+	// transform the priority to the correct text
+	var priorityTransform = {
+		format : function(value) {
+			var priorityArray = ["None", "Low", "Medium", "High"];
+			return priorityArray[value] ? priorityArray[value] : '';
+		}
+	};
+
+	// transform the priority to the correct text
+	var parentTitleTransform = {
+		format : function(value) {
+			var parentModel;
+			// check listsmodel because this transform method will be called by dojox.mvc before EditTodoItem view initial
+			if(!listsmodel || !listsmodel.model){
+				return "";
+			}
+			for(var i = 0; i < listsmodel.model.length; i++){
+				if(listsmodel.model[i].id == value){  // find the listId in the listsmodel
+					parentModel = listsmodel.model[i];
+					return parentModel.title;  // set the parentModel title
+				}
+			}
+			return "";
+		}
+	};
+	
+	var addNewItem = function(){
+		var datamodel = this.app.currentItemListModel.model;
+
+		var listId = 0;
+
+		this.app.currentItemListModel.model.push(new getStateful({
+			"id": parseInt((new Date().getTime())),
+			"listId": listId,
+			"title": "",
+			"notes": "",
+			"due": null,
+			"completionDate": "",
+			"reminderOnAday": "off",   
+			"reminderDate": "",
+			"reminderOnAlocation": "off",   
+			"reminderLocation": null,
+			"repeat": 0,
+			"priority": 0,
+			"hidden": false,
+			"completed": false,
+			"deleted": false
+		}));
+		this.app.selected_item = this.app.currentItemListModel.model.length - 1;
+		this.app.currentItemListModel.commit();
+		this.app.currentItemListModel.set("cursorIndex", this.app.selected_item);
+	};
+
+	var refreshData = function(){
+		var datamodel = this.app.currentItemListModel.model[this.app.selected_item];
+		if(!datamodel){
+			return;
+		}
+
+		if(!detailsSetup){  // these bindings only have to be setup once.
+			detailsSetup = true;
+
+			// we only need to set the target for the group once
+			// the cursorIndex is set in the showItemDetails function in ViewListTodoItemsProgrammatic or ViewAllTodoItemsByDate 
+			registry.byId("item_detailsGroup").set("target", at(this.app.currentItemListModel, "cursor"));
+
+			// Setup data bindings here for the fields inside the item_detailsGroup.
+			// use at() to bind the attribute of the widget with the id to value from the model
+			var bindingArray = [
+				{"id":"detail_todo", "attribute":"value", "atparm1":'rel:', "atparm2":'title',"direction":at.both,"transform":null},
+				{"id":"detail_todo", "attribute":"class", "atparm1":'rel:', "atparm2":'completed',"direction":at.from,"transform":itemCompletedClassTransform},
+				{"id":"detail_todoNote", "attribute":"value", "atparm1":'rel:', "atparm2":'notes',"direction":at.both,"transform":null},			
+				{"id":"detail_completed", "attribute":"checked", "atparm1":'rel:', "atparm2":'completed',"direction":at.both,"transform":null}			
+			];
+			
+			// bind all of the attrbutes setup in the bindingArray, this is a one time setup
+			bindAttributes(bindingArray);
+		}
+
+		domStyle.set(dom.byId("detailwrapper"), "visibility", "visible"); // show the items list
+
+	};
+
+	var bindAttributes = function(bindingArray){
+		for(var i=0; i < bindingArray.length; i++){
+			item = bindingArray[i];
+			var binding = at(item.atparm1, item.atparm2).direction(item.direction);
+			if (item.transform){ binding.transform(item.transform); }
+			registry.byId(item.id).set(item.attribute, binding);
+		}
+	};
+
+	var show = function(){
+		registry.byId("dlg_confirm").show();
+	};
+
+	var hide = function(){
+		registry.byId("dlg_confirm").hide();
+	};
+
+	return {
+		init: function(){
+			listsmodel = this.loadedModels.listsmodel;
+
+
+			// use _this.backFlag to identify the EditTodoItem view back to items,ViewListTodoItemsProgrammatic view
+			registry.byId("detail_back").on("click", lang.hitch(this, function(){
+				this._backFlag = true;
+				history.back();
+			}));
+
+			registry.byId("deleteCurrentItem").on("click", lang.hitch(this, function(){
+				isComplete = false;
+				isDelete = true;
+				dom.byId("dlg_title").innerHTML = "Delete";
+				dom.byId("dlg_text").innerHTML = "Are you sure you want to delete this item?";
+				show();
+			}));
+
+			registry.byId("confirm_yes").on("click", lang.hitch(this, function(){
+				var datamodel = this.app.currentItemListModel;
+				var index = this.app.selected_item;
+				if(isDelete){
+					datamodel = this.app.currentItemListModel.model;
+					var len = datamodel.length;
+					//remove from current datamodel
+					if(index>=0 && index<len){
+						datamodel.splice(index, 1);
+					}
+				}
+				this.app.currentItemListModel.commit(); // commit updates
+				//hide confirm dialog
+				hide();
+				//transition to list view TODO: this should go back to where it was
+				var transOpts = {
+						title:"List",
+						target:"items,ViewListTodoItemsProgrammatic",
+						url: "#items,ViewListTodoItemsProgrammatic"
+				};
+				new TransitionEvent(dom.byId("item_detailsGroup"), transOpts, null).dispatch();
+			}));
+
+			registry.byId("confirm_no").on("click", lang.hitch(this, function(){
+				hide();
+			}));
+		},
+
+		beforeActivate: function(){
+			if(this.app._addNewItem){
+				addNewItem();
+			}
+			refreshData();
+			registry.byId("detail_todo").focus();
+			this.app._addNewItem = false;
+		},
+
+		afterDeactivate: function(){
+			//console.log("items/lists afterDeactivate called this.app.selected_configuration_item =",this.app.selected_configuration_item);
+			domStyle.set(dom.byId("detailwrapper"), "visibility", "hidden"); // hide the items list 
+		},
+
+		beforeDeactivate: function(){
+			dom.byId("detail_todoNote").focus();
+			if(this.app._addNewItem){
+				return;	// refresh view operation, DO NOT commit the data change 
+			}
+			var title = dom.byId("detail_todo").value;
+			// a user maybe set "Priority" first and then set title. This operation will cause EditTodoItem view beforeDeactivate() be called.
+			// So we use this._backFlag to identify only back from EditTodoItem view and item's title is empty, the item need to be removed.
+			if(!title && this._backFlag){
+				// remove this item
+				this.app.currentItemListModel.model.splice(this.app.selected_item, 1);
+			}
+			this.app.currentItemListModel.commit();
+			this.app._addNewItemCommit = true;
+			this._backFlag = false;
+		},
+
+		destroy: function(){
+			// _WidgetBase.on listener is automatically destroyed when the Widget itself his.
+		}
+	}
+});

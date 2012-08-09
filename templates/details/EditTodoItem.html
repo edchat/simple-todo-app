@@ -1,0 +1,36 @@
+<div class="view mblView">
+	<!--
+		This template does not include the data-bindings, data-bindings for this view are setup in the
+		refreshData and bindAttributes functions of views/details/EditTodoItem.js 
+	-->	
+	<h1 data-dojo-type="dojox/mobile/Heading" data-dojo-props="label: 'Details'" data-app-region="top">
+		<div id="detail_back" data-dojo-type="dojox/mobile/ToolBarButton" data-dojo-props="arrow: 'left', label: 'Back'" style="float:left"></div>
+	</h1>
+	<div data-dojo-type="dojox/app/widgets/Container" id="details" data-dojo-props="scrollable: true">
+	<div id="detailwrapper" style="visibility:hidden">
+		<div class="fieldset" id="item_detailsGroup" data-dojo-type="dojox/mvc/Group">
+				<div  class="itemcellwrapper">
+					<textarea id="detail_todo" data-dojo-type="dojox/mobile/ExpandingTextArea" class="itemcell" placeholder="Title"></textarea>  
+				</div>
+			<div id="moreDetailNotes" class="itemcellwrapper">
+				<textarea id="detail_todoNote" data-dojo-type="dojox/mobile/ExpandingTextArea"
+						class="itemcell" placeholder="Notes">
+				</textarea>
+			</div>			
+			<div  class="buttoncellwrapper">
+				<label for="detail_completed">Complete</label><input type="checkbox" id="detail_completed" data-dojo-type="dojox/mobile/CheckBox">
+			</div>
+		</div>
+		<div  class="buttoncellwrapper">
+			<button id="deleteCurrentItem" data-dojo-type="dojox/mobile/Button" class="baseBtn mblRedButton itemcell">Delete</button>
+		</div>
+
+		<div id="dlg_confirm" data-dojo-type="dojox/mobile/SimpleDialog">
+			<div id="dlg_title" class="mblSimpleDialogTitle">Confirm</div>
+			<div id="dlg_text" class="mblSimpleDialogText">Are you sure?</div>
+			<button id="confirm_no" data-dojo-type="dojox/mobile/Button" class="mblSimpleDialogButton"> No </button>
+			<button id="confirm_yes" data-dojo-type="dojox/mobile/Button" class="mblSimpleDialogButton mblBlueButton">Yes</button>
+		</div>
+	</div>
+	</div>
+</div>
