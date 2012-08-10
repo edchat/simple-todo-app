@@ -8,61 +8,43 @@ function(dom, lang, has, declare, domStyle, when, registry, at, RoundRectList, W
 			Templated, ListItem, EditStoreRefListController, getStateful, ItemFileWriteStore, DataStore, 
 			parser, TransitionEvent, RoundRectWidListTemplate){
 
-	showItemDetails = function(index){
-		// summary:
-		//		set the cursorIndex for this.app.currentItemListModel so the selected item will be displayed after transition to details 
-		this.app.selected_item = parseInt(index);
-		this.app.currentItemListModel.set("cursorIndex", this.app.selected_item);
-	};
-
-
-	itemCompletedClassTransform = {
-		format : function(value) {
-			// check to see if the item is completed, if so display it in strikethrough and gray
-			if(value){
-				return "itemCompleted";
-			}else{
-				return "";
-			}
-		}
-	};
-
 	var roundRectWidList = null;
 
-	var showListData = function(/*dojox/mvc/EditStoreRefListController*/ datamodel){
-		// summary:
-		//		create the WidgetList programatically if it has not been created, and 
-		//		set the children for items_list widget to the datamodel to show the items in the selected list.
-		//		RoundRectWidListTemplate is used for the templateString of the WidgetList.
-		//
-		// datamodel: dojox/mvc/EditStoreRefListController
-		//		The EditStoreRefListController whose model holds the items for the selected list.
-		//
-		if(!roundRectWidList) {
-			var clz = declare([WidgetList, RoundRectList], {});
-			roundRectWidList = new clz({
-				children: at(datamodel, "model"),
-				childClz: declare([Templated /* dojox/mvc/Templated module return value */, ListItem /* dojox/mobile/ListItem module return value */]),
-				childParams: {
-					transitionOptions: {title: "Detail",target: "details,EditTodoItem",url: "#details,EditTodoItem"},
-					clickable: true,
-					onClick: function(){showItemDetails(this.indexAtStartup);}
-				},
-				childBindings: {
-					titleNode: {value: at("rel:", "title"), 
-								class: at("rel:","completed").direction(at.from).transform(itemCompletedClassTransform)},
-					checkedNode: {checked: at("rel:", "completed")}
-				},
-				templateString: RoundRectWidListTemplate
-			});
-			roundRectWidList.placeAt(dom.byId("list_container"));
-			roundRectWidList.startup();
-		}else{
-			roundRectWidList.set("children", at(datamodel, 'model'));
-		}
-	};
 
 	return {
+		showListData: function(/*dojox/mvc/EditStoreRefListController*/ datamodel){
+			// summary:
+			//		create the WidgetList programatically if it has not been created, and 
+			//		set the children for items_list widget to the datamodel to show the items in the selected list.
+			//		RoundRectWidListTemplate is used for the templateString of the WidgetList.
+			//
+			// datamodel: dojox/mvc/EditStoreRefListController
+			//		The EditStoreRefListController whose model holds the items for the selected list.
+			//
+			if(!roundRectWidList) {
+				var clz = declare([WidgetList, RoundRectList], {});
+				roundRectWidList = new clz({
+					children: at(datamodel, "model"),
+					childClz: declare([Templated /* dojox/mvc/Templated module return value */, ListItem /* dojox/mobile/ListItem module return value */]),
+					childParams: {
+						transitionOptions: {title: "Detail",target: "details,EditTodoItem",url: "#details,EditTodoItem"},
+						clickable: true,
+						onClick: function(){app.showItemDetails(this.indexAtStartup);}
+					},
+					childBindings: {
+						titleNode: {value: at("rel:", "title"), 
+								class: at("rel:","completed").direction(at.from).transform(app.itemCompletedClassTransform)},
+						checkedNode: {checked: at("rel:", "completed")}
+					},
+					templateString: RoundRectWidListTemplate
+				});
+				roundRectWidList.placeAt(dom.byId("list_container"));
+				roundRectWidList.startup();
+			}else{
+				roundRectWidList.set("children", at(datamodel, 'model'));
+			}
+		},
+
 		init: function(){
 			// summary:
 			//		view life cycle init()
@@ -82,9 +64,7 @@ function(dom, lang, has, declare, domStyle, when, registry, at, RoundRectList, W
 			}));
 
 			this.app.selected_item = 0; // reset selected item to 0, -1 is out of index
-			var listCtl = this.loadedModels.allitemlistmodel;
-			this.app.currentItemListModel = listCtl;
-			showListData(listCtl);
+			this.showListData(this.app.loadedModels.allitemlistmodel);
 		},
 
 		beforeActivate: function(){
@@ -100,8 +80,8 @@ function(dom, lang, has, declare, domStyle, when, registry, at, RoundRectList, W
 		beforeDeactivate: function(){
 			// summary:
 			//		view life cycle beforeDeactivate()
-			if(!this.app._addNewItemCommit && this.app.currentItemListModel){
-				this.app.currentItemListModel.commit(); //commit mark item as Complete change
+			if(!this.app._addNewItemCommit && this.loadedModels.allitemlistmodel){
+				this.loadedModels.allitemlistmodel.commit(); //commit mark item as Complete change
 			}
 			this.app._addNewItemCommit = false;
 		}

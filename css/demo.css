@@ -18,8 +18,8 @@ html,body {
 }
 
 .buttoncellwrapper { 
-	margin-top: 9px;
-	margin-bottom: 7px;
+	margin-top: 19px;
+	margin-bottom: 17px;
 	margin-left: 10px;
 	margin-right: 10px;
 }
@@ -38,6 +38,11 @@ html,body {
 .itemCompleted { 
 	text-decoration: line-through;
 	color: gray;
+}
+
+.completeCheck { 
+	width:2em;
+	height:2em; 
 }
 
 

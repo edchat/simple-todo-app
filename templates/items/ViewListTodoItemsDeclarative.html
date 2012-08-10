@@ -15,7 +15,7 @@
 			data-mvc-child-mixins="dojox/mobile/ListItem"
 			data-mvc-child-props="clickable: true,
 				transitionOptions: {title:'Detail', target:'details,EditTodoItem',url: '#details,EditTodoItem'},
-				onClick: function(){showItemDetails(this.indexAtStartup);}">
+				onClick: function(){app.showItemDetails(this.indexAtStartup);}">
 			<script type="dojox/mvc/InlineTemplate">
 				<li class="mblVariableHeight">
 						<div preventTouch="true" class="lineItemPreventTouch"></div>
@@ -24,7 +24,7 @@
 							data-dojo-props="preventTouch: true, checked: at('rel:', 'completed')"/>
 							<div data-dojo-type="dojox/mvc/Output" style="display: inline"
 								data-dojo-props="value: at('rel:','title'), 
-												class: at('rel:','completed').direction(at.from).transform(itemCompletedClassTransform)"></div>
+												class: at('rel:','completed').direction(at.from).transform(app.itemCompletedClassTransform)"></div>
 				</li>
 			</script>
 		</ul>
