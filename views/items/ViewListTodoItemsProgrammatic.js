@@ -51,7 +51,7 @@ function(dom, lang, has, declare, domStyle, when, registry, at, RoundRectList, W
 			// description:
 			//		init is doing the same thing as beforeAcitvate only to handle the case where a page  
 			//		page refresh is done on a selected item, without this code in init the details will not display.
-			registry.byId("itemslist_add").on("click", lang.hitch(this, function(e){
+			this._widget.itemslist_add.on("click", lang.hitch(this, function(e){
 				this.app._addNewItem = true;
 
 				// transition to detail view for edit
