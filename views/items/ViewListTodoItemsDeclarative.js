@@ -23,7 +23,7 @@ function(dom, lang, has, domStyle, when, registry, at, EditStoreRefListControlle
 			//		view life cycle init()
 			// description:
 			//		call showListData during init, once data is bound it does not have to be called again
-			registry.byId("itemslist_add2").on("click", lang.hitch(this, function(e){
+			this._widget.itemslist_add.on("click", lang.hitch(this, function(e){
 				this.app._addNewItem = true;
 
 				// transition to detail view for edit
