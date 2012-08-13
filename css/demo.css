@@ -1,0 +1,39 @@
+html,body {
+	width: 100%;
+	height: 100%;
+	background-color: black;
+}
+
+.itemcell { 
+	width: 100%;  
+	display:inline-block;
+}
+
+.itemcellwrapper { 
+	margin-top: 9px;
+	margin-right: 12px;
+	margin-bottom: 7px;
+	margin-left: 10px;
+	padding-right: 8px;
+}
+
+.buttoncellwrapper { 
+	margin-top: 19px;
+	margin-bottom: 17px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.itemCompleted { 
+	text-decoration: line-through;
+	color: gray;
+}
+
+.lineItemPreventTouch {
+	width:2.5em;
+	height:3em; 
+	position:absolute; 
+	margin-left: -8px;
+	margin-top: -11px;
+}
+

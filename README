@@ -1,8 +1,5 @@
-simple-todo-app
-===============
-
-A Simple todo app, first step to creating the dojo-todo-app
-
+-------------------------------------------------------------------------------
+To Do Application - This is a ToDo sample application based on dojox/app, dojox/mobile & dojox/mvc modules
 -------------------------------------------------------------------------------
 Authors: Ed Chatelain, Christophe Jolif, Eric Wang, Chris Mitchell
 -------------------------------------------------------------------------------
