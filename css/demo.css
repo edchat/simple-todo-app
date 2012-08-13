@@ -24,27 +24,10 @@ html,body {
 	margin-right: 10px;
 }
 
-.dateLabel { 
-	font-size: .6em; 
-	color: #324f85; 
-	margin-left: 3em;
-}
-
-.dateLabelInvalid { 
-	color: red;
-}
-
-
 .itemCompleted { 
 	text-decoration: line-through;
 	color: gray;
 }
-
-.completeCheck { 
-	width:2em;
-	height:2em; 
-}
-
 
 .lineItemPreventTouch {
 	width:2.5em;
