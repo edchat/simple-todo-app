@@ -73,36 +73,36 @@
 	},
 
 	//the name of the scene to load when the app is initialized.
-	"defaultView": "items,ViewListTodoItemsProgrammatic",
+	"defaultView": "items,TodoItemsListController",
 
 	"defaultTransition": "slide",
 	//scenes are groups of views and models loaded at once
 	"views": {
-		//items scene, include ViewListTodoItemsProgrammatic view and ViewListTodoItemsDeclarative view
+		//items scene, include TodoItemsListController view and TodoItemsListDeclarativeController view
 		"items": {
-			"defaultView": "ViewListTodoItemsProgrammatic",
+			"defaultView": "TodoItemsListController",
 			"defaultTransition": "slide",
 			"definition": "none",
 			//the views available to this scene
 			"views": {
-				"ViewListTodoItemsProgrammatic":{
-					"template": "simple-todo-app/templates/items/ViewListTodoItemsProgrammatic.html"
+				"TodoItemsListController":{
+					"template": "simple-todo-app/templates/items/TodoItemsListView.html"
 				},
-				"ViewListTodoItemsDeclarative":{
-					"template": "simple-todo-app/templates/items/ViewListTodoItemsDeclarative.html"
+				"TodoItemsListDeclarativeController":{
+					"template": "simple-todo-app/templates/items/TodoItemsListDeclarativeView.html"
 				}
 			}
 		},
 
 		//details scene, include list view and date view
 		"details": {
-			"defaultView": "EditTodoItem",
+			"defaultView": "TodoItemDetailsController",
 			"defaultTransition": "slide",
 			"definition": "none",
 
 			"views": {
-				"EditTodoItem":{
-					"template": "simple-todo-app/templates/details/EditTodoItem.html"
+				"TodoItemDetailsController":{
+					"template": "simple-todo-app/templates/details/TodoItemDetailsView.html"
 				}
 			}
 		}
