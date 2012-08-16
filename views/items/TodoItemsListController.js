@@ -27,7 +27,7 @@ function(dom, lang, has, declare, domStyle, when, registry, at, RoundRectList, W
 					children: at(datamodel, "model"),
 					childClz: declare([Templated /* dojox/mvc/Templated module return value */, ListItem /* dojox/mobile/ListItem module return value */]),
 					childParams: {
-						transitionOptions: {title: "Detail",target: "details,EditTodoItem",url: "#details,EditTodoItem"},
+						transitionOptions: {title: "Detail",target: "details,TodoItemDetailsController",url: "#details,TodoItemDetailsController"},
 						clickable: true,
 						onClick: function(){app.showItemDetails(this.indexAtStartup);}
 					},
@@ -55,8 +55,8 @@ function(dom, lang, has, declare, domStyle, when, registry, at, RoundRectList, W
 				// transition to detail view for edit
 				var transOpts = {
 					title: "Detail",
-					target: "details,EditTodoItem",
-					url: "#details,EditTodoItem"
+					target: "details,TodoItemDetailsController",
+					url: "#details,TodoItemDetailsController"
 				};
 				new TransitionEvent(e.srcElement, transOpts, e).dispatch();
 			}));

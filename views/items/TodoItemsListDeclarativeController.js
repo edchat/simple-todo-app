@@ -29,8 +29,8 @@ function(dom, lang, has, domStyle, when, registry, at, EditStoreRefListControlle
 				// transition to detail view for edit
 				var transOpts = {
 					title: "Detail",
-					target: "details,EditTodoItem",
-					url: "#details,EditTodoItem"
+					target: "details,TodoItemDetailsController",
+					url: "#details,TodoItemDetailsController"
 				};
 				new TransitionEvent(e.srcElement, transOpts, e).dispatch();
 			}));

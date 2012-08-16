@@ -58,7 +58,7 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 			listsmodel = this.loadedModels.listsmodel;
 
 
-			// use _this.backFlag to identify the EditTodoItem view back to items,ViewListTodoItemsProgrammatic view
+			// use _this.backFlag to identify the TodoItemDetailsController view back to items,TodoItemsListController view
 			this.getWidget().detail_back.on("click", lang.hitch(this, function(){
 				this._backFlag = true;
 				history.back();
@@ -91,8 +91,8 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 				//transition to list view TODO: this should go back to where it was
 				var transOpts = {
 						title:"List",
-						target:"items,ViewListTodoItemsProgrammatic",
-						url: "#items,ViewListTodoItemsProgrammatic"
+						target:"items,TodoItemsListController",
+						url: "#items,TodoItemsListController"
 				};
 				new TransitionEvent(dom.byId("item_detailsGroup"), transOpts, null).dispatch();
 			}));
@@ -139,8 +139,8 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 				return;	// refresh view operation, DO NOT commit the data change 
 			}
 			var title = this.getWidget().detail_todo.value;
-			// a user maybe set "Priority" first and then set title. This operation will cause EditTodoItem view beforeDeactivate() be called.
-			// So we use this._backFlag to identify only back from EditTodoItem view and item's title is empty, the item need to be removed.
+			// a user maybe set "Priority" first and then set title. This operation will cause TodoItemDetailsController view beforeDeactivate() be called.
+			// So we use this._backFlag to identify only back from TodoItemDetailsController view and item's title is empty, the item need to be removed.
 			if(!title && this._backFlag){
 				// remove this item
 				this.loadedModels.allitemlistmodel.model.splice(this.app.selected_item, 1);
