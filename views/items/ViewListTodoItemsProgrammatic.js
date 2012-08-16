@@ -33,15 +33,13 @@ function(dom, lang, has, declare, domStyle, when, registry, at, RoundRectList, W
 					},
 					childBindings: {
 						titleNode: {value: at("rel:", "title"), 
-								class: at("rel:","completed").direction(at.from).transform(app.itemCompletedClassTransform)},
+						class: at("rel:","completed").direction(at.from).transform(app.itemCompletedClassTransform)},
 						checkedNode: {checked: at("rel:", "completed")}
 					},
 					templateString: RoundRectWidListTemplate
 				});
 				roundRectWidList.placeAt(dom.byId("list_container"));
 				roundRectWidList.startup();
-			}else{
-				roundRectWidList.set("children", at(datamodel, 'model'));
 			}
 		},
 
@@ -51,7 +49,7 @@ function(dom, lang, has, declare, domStyle, when, registry, at, RoundRectList, W
 			// description:
 			//		init is doing the same thing as beforeAcitvate only to handle the case where a page  
 			//		page refresh is done on a selected item, without this code in init the details will not display.
-			this._widget.itemslist_add.on("click", lang.hitch(this, function(e){
+			this.getWidget().itemslist_add.on("click", lang.hitch(this, function(e){
 				this.app._addNewItem = true;
 
 				// transition to detail view for edit
@@ -84,6 +82,12 @@ function(dom, lang, has, declare, domStyle, when, registry, at, RoundRectList, W
 				this.loadedModels.allitemlistmodel.commit(); //commit mark item as Complete change
 			}
 			this.app._addNewItemCommit = false;
+		},
+
+		getWidget: function(){
+			// summary:
+			//		return _widget
+			return this._widget;
 		}
 	};
 });

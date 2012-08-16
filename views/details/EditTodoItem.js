@@ -45,7 +45,7 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 				item = bindingArray[i];
 				var binding = at(item.atparm1, item.atparm2).direction(item.direction);
 				if (item.transform){ binding.transform(item.transform); }
-				registry.byId(item.id).set(item.attribute, binding);
+				this.getWidget()[item.attachpoint].set(item.attribute, binding);
 			}
 		},
 
@@ -59,20 +59,21 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 
 
 			// use _this.backFlag to identify the EditTodoItem view back to items,ViewListTodoItemsProgrammatic view
-			registry.byId("detail_back").on("click", lang.hitch(this, function(){
+			this.getWidget().detail_back.on("click", lang.hitch(this, function(){
 				this._backFlag = true;
 				history.back();
 			}));
 
-			registry.byId("deleteCurrentItem").on("click", lang.hitch(this, function(){
+			this.getWidget().deleteCurrentItem.on("click", lang.hitch(this, function(){
 				isComplete = false;
 				isDelete = true;
 				dom.byId("dlg_title").innerHTML = "Delete";
 				dom.byId("dlg_text").innerHTML = "Are you sure you want to delete this item?";
-				registry.byId("dlg_confirm").show();
+				this.getWidget().dlg_confirm.show();
+
 			}));
 
-			registry.byId("confirm_yes").on("click", lang.hitch(this, function(){
+			this.getWidget().confirm_yes.on("click", lang.hitch(this, function(){
 				var datamodel = this.loadedModels.allitemlistmodel;
 				var index = this.app.selected_item;
 				if(isDelete){
@@ -85,7 +86,8 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 				}
 				this.loadedModels.allitemlistmodel.commit(); // commit updates
 				//hide confirm dialog
-				registry.byId("dlg_confirm").hide();
+				this.getWidget().dlg_confirm.hide();
+
 				//transition to list view TODO: this should go back to where it was
 				var transOpts = {
 						title:"List",
@@ -95,21 +97,21 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 				new TransitionEvent(dom.byId("item_detailsGroup"), transOpts, null).dispatch();
 			}));
 
-			registry.byId("confirm_no").on("click", lang.hitch(this, function(){
-				registry.byId("dlg_confirm").hide();
+			this.getWidget().confirm_no.on("click", lang.hitch(this, function(){
+				this.getWidget().dlg_confirm.hide();
 			}));
 			
 			// we only need to set the target for the group once, so we can do it in init
 			// the cursorIndex is set in the app.showItemDetails function in simple-todo-app 
-			registry.byId("item_detailsGroup").set("target", at(this.loadedModels.allitemlistmodel, "cursor"));
+			this.getWidget().item_detailsGroup.set("target", at(this.loadedModels.allitemlistmodel, "cursor"));
 
 			// Setup data bindings here for the fields inside the item_detailsGroup.
-			// use at() to bind the attribute of the widget with the id to value from the model
+			// use at() to bind the attribute of the widget with the attachpoint to value from the model with direction and an optional transform
 			var bindingArray = [
-				{"id":"detail_todo", "attribute":"value", "atparm1":'rel:', "atparm2":'title',"direction":at.both,"transform":null},
-				{"id":"detail_todo", "attribute":"class", "atparm1":'rel:', "atparm2":'completed',"direction":at.from,"transform":app.itemCompletedClassTransform},
-				{"id":"detail_todoNote", "attribute":"value", "atparm1":'rel:', "atparm2":'notes',"direction":at.both,"transform":null},			
-				{"id":"detail_completed", "attribute":"checked", "atparm1":'rel:', "atparm2":'completed',"direction":at.both,"transform":null}			
+				{"attachpoint":"detail_todo", "attribute":"value", "atparm1":'rel:', "atparm2":'title',"direction":at.both,"transform":null},
+				{"attachpoint":"detail_todo", "attribute":"class", "atparm1":'rel:', "atparm2":'completed',"direction":at.from,"transform":app.itemCompletedClassTransform},
+				{"attachpoint":"detail_todoNote", "attribute":"value", "atparm1":'rel:', "atparm2":'notes',"direction":at.both,"transform":null},			
+				{"attachpoint":"detail_completed", "attribute":"checked", "atparm1":'rel:', "atparm2":'completed',"direction":at.both,"transform":null}			
 			];
 			
 			// bind all of the attrbutes setup in the bindingArray, this is a one time setup
@@ -123,21 +125,20 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 			}
 			domStyle.set(dom.byId("detailwrapper"), "visibility", "visible"); // show the items list
 			
-			registry.byId("detail_todo").focus();
+			this.getWidget().detail_todo.focus();
 			this.app._addNewItem = false;
 		},
 
 		afterDeactivate: function(){
-			//console.log("items/lists afterDeactivate called this.app.selected_configuration_item =",this.app.selected_configuration_item);
 			domStyle.set(dom.byId("detailwrapper"), "visibility", "hidden"); // hide the items list 
 		},
 
 		beforeDeactivate: function(){
-			dom.byId("detail_todoNote").focus();
+			this.getWidget().detail_todoNote.focus();
 			if(this.app._addNewItem){
 				return;	// refresh view operation, DO NOT commit the data change 
 			}
-			var title = dom.byId("detail_todo").value;
+			var title = this.getWidget().detail_todo.value;
 			// a user maybe set "Priority" first and then set title. This operation will cause EditTodoItem view beforeDeactivate() be called.
 			// So we use this._backFlag to identify only back from EditTodoItem view and item's title is empty, the item need to be removed.
 			if(!title && this._backFlag){
@@ -147,6 +148,12 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 			this.loadedModels.allitemlistmodel.commit();
 			this.app._addNewItemCommit = true;
 			this._backFlag = false;
+		},
+
+		getWidget: function(){
+			// summary:
+			//		return _widget
+			return this._widget;
 		},
 
 		destroy: function(){
