@@ -43,9 +43,12 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 			//		add to add a new item to a todo list
 			for(var i=0; i < bindingArray.length; i++){
 				item = bindingArray[i];
+				// setup the binding with the parameters and the direction
 				var binding = at(item.atparm1, item.atparm2).direction(item.direction);
+				// set the transform if one is used
 				if (item.transform){ binding.transform(item.transform); }
-				this.getWidget()[item.attachpoint].set(item.attribute, binding);
+				// do the binding for the attach-point's attribute with the binding setup above
+				this.getView()[item.attachpoint].set(item.attribute, binding);
 			}
 		},
 
@@ -58,22 +61,24 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 			listsmodel = this.loadedModels.listsmodel;
 
 
-			// use _this.backFlag to identify the TodoItemDetailsController view back to items,TodoItemsListController view
-			this.getWidget().detail_back.on("click", lang.hitch(this, function(){
+			// when the detail_back attach-point is clicked the view back to items,TodoItemsListController view
+			this.getView().detail_back.on("click", lang.hitch(this, function(){
 				this._backFlag = true;
 				history.back();
 			}));
 
-			this.getWidget().deleteCurrentItem.on("click", lang.hitch(this, function(){
+			// when the deleteCurrentItem attach-point is clicked show the Delete confirmation dialog
+			this.getView().deleteCurrentItem.on("click", lang.hitch(this, function(){
 				isComplete = false;
 				isDelete = true;
 				dom.byId("dlg_title").innerHTML = "Delete";
 				dom.byId("dlg_text").innerHTML = "Are you sure you want to delete this item?";
-				this.getWidget().dlg_confirm.show();
+				this.getView().dlg_confirm.show();
 
 			}));
 
-			this.getWidget().confirm_yes.on("click", lang.hitch(this, function(){
+			// when the confirm_yes attach-point is clicked delete the selected item from the datamodel, and transition back to TodoItemsListController
+			this.getView().confirm_yes.on("click", lang.hitch(this, function(){
 				var datamodel = this.loadedModels.allitemlistmodel;
 				var index = this.app.selected_item;
 				if(isDelete){
@@ -86,7 +91,7 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 				}
 				this.loadedModels.allitemlistmodel.commit(); // commit updates
 				//hide confirm dialog
-				this.getWidget().dlg_confirm.hide();
+				this.getView().dlg_confirm.hide();
 
 				//transition to list view TODO: this should go back to where it was
 				var transOpts = {
@@ -97,16 +102,18 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 				new TransitionEvent(dom.byId("item_detailsGroup"), transOpts, null).dispatch();
 			}));
 
-			this.getWidget().confirm_no.on("click", lang.hitch(this, function(){
-				this.getWidget().dlg_confirm.hide();
+			// when the confirm_no attach-point is clicked hide the confirm dialog with out deleting the item
+			this.getView().confirm_no.on("click", lang.hitch(this, function(){
+				this.getView().dlg_confirm.hide();
 			}));
 			
-			// we only need to set the target for the group once, so we can do it in init
+			// we only need to set the target for the group once, so we can do it in init()
+			// when the item_detailsGroup attach-point sets the target the relative bindings for the fields in the group are set
 			// the cursorIndex is set in the app.showItemDetails function in simple-todo-app 
-			this.getWidget().item_detailsGroup.set("target", at(this.loadedModels.allitemlistmodel, "cursor"));
+			this.getView().item_detailsGroup.set("target", at(this.loadedModels.allitemlistmodel, "cursor"));
 
 			// Setup data bindings here for the fields inside the item_detailsGroup.
-			// use at() to bind the attribute of the widget with the attachpoint to value from the model with direction and an optional transform
+			// use at() to bind the attribute of the widget with the attach-point to value from the model with direction and an optional transform
 			var bindingArray = [
 				{"attachpoint":"detail_todo", "attribute":"value", "atparm1":'rel:', "atparm2":'title',"direction":at.both,"transform":null},
 				{"attachpoint":"detail_todo", "attribute":"class", "atparm1":'rel:', "atparm2":'completed',"direction":at.from,"transform":app.itemCompletedClassTransform},
@@ -125,7 +132,8 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 			}
 			domStyle.set(dom.byId("detailwrapper"), "visibility", "visible"); // show the items list
 			
-			this.getWidget().detail_todo.focus();
+			// set the focus to the detail_todo attach-point here in beforeActivate
+			this.getView().detail_todo.focus();
 			this.app._addNewItem = false;
 		},
 
@@ -134,13 +142,13 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 		},
 
 		beforeDeactivate: function(){
-			this.getWidget().detail_todoNote.focus();
+			// set the focus to the detail_todoNote attach-point here in beforeDeactivate to force the update of detail_todo since the TextBox notifies of updates on a focus change
+			this.getView().detail_todoNote.focus();
 			if(this.app._addNewItem){
 				return;	// refresh view operation, DO NOT commit the data change 
 			}
-			var title = this.getWidget().detail_todo.value;
-			// a user maybe set "Priority" first and then set title. This operation will cause TodoItemDetailsController view beforeDeactivate() be called.
-			// So we use this._backFlag to identify only back from TodoItemDetailsController view and item's title is empty, the item need to be removed.
+			// If the title has been blanked out, we will need to delete the item
+			var title = this.getView().detail_todo.value;
 			if(!title && this._backFlag){
 				// remove this item
 				this.loadedModels.allitemlistmodel.model.splice(this.app.selected_item, 1);
@@ -150,9 +158,10 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 			this._backFlag = false;
 		},
 
-		getWidget: function(){
+		getView: function(){
 			// summary:
-			//		return _widget
+			//		getView is setup here to give access to the attach-points setup in the template which are available from _widget
+			//		this function will be moved into the View base class next release
 			return this._widget;
 		},
 

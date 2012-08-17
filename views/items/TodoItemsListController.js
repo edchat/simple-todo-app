@@ -49,7 +49,9 @@ function(dom, lang, has, declare, domStyle, when, registry, at, RoundRectList, W
 			// description:
 			//		init is doing the same thing as beforeAcitvate only to handle the case where a page  
 			//		page refresh is done on a selected item, without this code in init the details will not display.
-			this.getWidget().itemslist_add.on("click", lang.hitch(this, function(e){
+			
+			// when the itemslist_add attachpoint is clicked transition to the TodoItemDetailsController with this.app._addNewItem set to true
+			this.getView().itemslist_add.on("click", lang.hitch(this, function(e){
 				this.app._addNewItem = true;
 
 				// transition to detail view for edit
@@ -84,9 +86,10 @@ function(dom, lang, has, declare, domStyle, when, registry, at, RoundRectList, W
 			this.app._addNewItemCommit = false;
 		},
 
-		getWidget: function(){
+		getView: function(){
 			// summary:
-			//		return _widget
+			//		getView is setup here to give access to the attach-points setup in the template which are available from _widget
+			//		this function will be moved into the View base class next release
 			return this._widget;
 		}
 	};
