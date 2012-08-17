@@ -23,7 +23,7 @@ function(dom, lang, has, domStyle, when, registry, at, EditStoreRefListControlle
 			//		view life cycle init()
 			// description:
 			//		call showListData during init, once data is bound it does not have to be called again
-			this.getWidget().itemslist_add.on("click", lang.hitch(this, function(e){
+			this.getView().itemslist_add.on("click", lang.hitch(this, function(e){
 				this.app._addNewItem = true;
 
 				// transition to detail view for edit
@@ -58,7 +58,7 @@ function(dom, lang, has, domStyle, when, registry, at, EditStoreRefListControlle
 			this.app._addNewItemCommit = false;
 		},
 
-		getWidget: function(){
+		getView: function(){
 			// summary:
 			//		return _widget
 			return this._widget;
