@@ -54,7 +54,7 @@ function(dom, lang, has, declare, domStyle, when, registry, at, RoundRectList, W
 			this.getView().itemslist_add.on("click", lang.hitch(this, function(e){
 				this.app._addNewItem = true;
 
-				// transition to detail view for edit
+				// transition to TodoItemDetailsController view 
 				var transOpts = {
 					title: "Detail",
 					target: "details,TodoItemDetailsController",

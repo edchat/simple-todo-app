@@ -12,8 +12,6 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 		addNewItem: function(){
 			// summary:
 			//		add to add a new item to a todo list
-			var datamodel = this.loadedModels.allitemlistmodel.model;
-
 			var listId = 0;
 
 			this.loadedModels.allitemlistmodel.model.push(new getStateful({
@@ -77,16 +75,15 @@ define(["dojo/_base/lang", "dojo/dom", "dojo/dom-style", "dojo/on", "dijit/regis
 
 			}));
 
-			// when the confirm_yes attach-point is clicked delete the selected item from the datamodel, and transition back to TodoItemsListController
+			// when the confirm_yes attach-point is clicked delete the selected item from allitemlistmodel, and 
+			// transition back to TodoItemsListController
 			this.getView().confirm_yes.on("click", lang.hitch(this, function(){
-				var datamodel = this.loadedModels.allitemlistmodel;
 				var index = this.app.selected_item;
 				if(isDelete){
-					datamodel = this.loadedModels.allitemlistmodel.model;
-					var len = datamodel.length;
-					//remove from current datamodel
+					var len = this.loadedModels.allitemlistmodel.length;
+					//remove from allitemlistmodel
 					if(index>=0 && index<len){
-						datamodel.splice(index, 1);
+						this.loadedModels.allitemlistmodel.splice(index, 1);
 					}
 				}
 				this.loadedModels.allitemlistmodel.commit(); // commit updates
